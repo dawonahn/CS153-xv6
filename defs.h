@@ -124,6 +124,7 @@ void            greeting(void);
 void            exitStatus(int);
 int             waitStat(int*);
 int             waitpid(int, int*, int);
+void            setpriority(int);
 
 // swtch.S
 void            swtch(struct context**, struct context*);

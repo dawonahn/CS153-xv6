@@ -121,3 +121,11 @@ sys_waitpid(void) {
   argint(2, &option);
   return waitpid(pid, status, option);
 }
+
+int
+sys_setpriority(void) {
+  int priority;
+  argint(0, &priority);
+  setpriority(priority);
+  return 0;
+}

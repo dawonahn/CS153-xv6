@@ -67,6 +67,15 @@ myproc(void) {
   return p;
 }
 
+void
+setpriority(int newPriority) {
+  struct proc *curproc = myproc();
+  if (newPriority >= 0 && newPriority <= 31) {
+    curproc->priority = newPriority;
+  }
+  return;
+}
+
 //PAGEBREAK: 32
 // Look in the process table for an UNUSED proc.
 // If found, change state to EMBRYO and initialize
@@ -90,6 +99,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+  p->priority = 10;
 
   release(&ptable.lock);
 
@@ -470,15 +480,25 @@ scheduler(void)
   struct proc *p;
   struct cpu *c = mycpu();
   c->proc = 0;
+  int highestPriority = 32;
   
   for(;;){
     // Enable interrupts on this processor.
     sti();
 
+    highestPriority = 32;
+
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE)
+      if (p->state == RUNNABLE && p->priority < highestPriority) {
+        highestPriority = p->priority;
+      }
+    }
+
+
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state != RUNNABLE || p->priority != highestPriority)
         continue;
 
       // Switch to chosen process.  It is the process's job

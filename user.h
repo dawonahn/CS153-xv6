@@ -27,6 +27,7 @@ void greeting(void);
 int exitStatus(int);
 int waitStat(int*);
 int waitpid(int, int*, int);
+void setpriority(int);
 
 // ulib.c
 int stat(const char*, struct stat*);
