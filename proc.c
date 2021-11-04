@@ -498,14 +498,23 @@ scheduler(void)
 
 
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE || p->priority != highestPriority)
+      if(p->state != RUNNABLE)
         continue;
+
+      if(p->priority != highestPriority && p->priority < 31) {
+        ++p->priority;
+        continue;
+      }
+
 
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
       c->proc = p;
       switchuvm(p);
+      if(p->priority > 0) {
+      --p->priority;
+      }
       p->state = RUNNING;
 
       swtch(&(c->scheduler), p->context);
