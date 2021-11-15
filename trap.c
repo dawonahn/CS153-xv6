@@ -55,7 +55,7 @@ trap(struct trapframe *tf)
         exit(); //trap from something other than the page fault we are trying to catch and fix for lab3
       }
       ++myproc()->pages;
-      //cprintf("Added another page");
+      cprintf("Added another page\n");
       break;
 
   case T_IRQ0 + IRQ_TIMER:
