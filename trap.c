@@ -47,6 +47,17 @@ trap(struct trapframe *tf)
   }
 
   switch(tf->trapno){
+  
+  case T_PGFLT:
+      if (rcr2() <= KERNBASE - 1) {
+        allocuvm(myproc()->pgdir, PGROUNDDOWN(rcr2()), PGROUNDDOWN(rcr2()) + PGSIZE);
+      } else {
+        exit(); //trap from something other than the page fault we are trying to catch and fix for lab3
+      }
+      ++myproc()->pages;
+      //cprintf("Added another page");
+      break;
+
   case T_IRQ0 + IRQ_TIMER:
     if(cpuid() == 0){
       acquire(&tickslock);
